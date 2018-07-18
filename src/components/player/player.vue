@@ -99,7 +99,7 @@
 </template>
 
 <script>
-    import {mapGetters, mapMutations} from 'vuex'
+    import {mapGetters, mapMutations,mapActions} from 'vuex'
     import animations from 'create-keyframe-animation'
     import {prefixStyle} from "common/js/dom";
     import ProgressBar from 'base/progress-bar/progress-bar'
@@ -276,6 +276,7 @@
             },
             ready() {
                 this.songReady = true;
+                this.savePlayHistory(this.currentSong);
             },
             end(){
                 if(this.mode === playMode.loop){
@@ -434,7 +435,10 @@
                 // setCurrentIndex: 'SET_CURRENT_INDEX',
                 // setPlayMode: 'SET_PLAY_MODE',
                 // setPlayList: 'SET_PLAYLIST'
-            })
+            }),
+            ...mapActions([
+                'savePlayHistory'
+            ])
         },
         watch: {
             playing(newPlaying) {

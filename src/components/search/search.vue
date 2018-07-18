@@ -5,7 +5,7 @@
         </div>
         <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
 
-            <scroll class="shortcut" ref="shortcut" :data="shortcut">
+            <scroll :refreshDelay="refreshDelay" class="shortcut" ref="shortcut" :data="shortcut">
                 <div>
                     <div class="hot-key">
                         <h1 class="title">热门搜索</h1>
@@ -43,11 +43,11 @@
     import Confirm from 'base/confirm/confirm'
     import SearchList from 'base/search-list/search-list';
     import Scroll from 'base/scroll/scroll'
-    import {playListMixin} from "common/js/mixin";
+    import {playListMixin,searchMixin} from "common/js/mixin";
 
     export default {
         name:'search',
-        mixins:[playListMixin],
+        mixins:[playListMixin,searchMixin],
         components:{
             SearchBox,
             Suggest,
@@ -59,7 +59,8 @@
           return {
               hotKey:[],
               randomNum:'',
-              query:''
+              query:'',
+              refreshDelay:100,
           }
         },
         computed:{
@@ -75,8 +76,8 @@
         },
         methods:{
             ...mapActions([
-                'saveSearchHistory',
-                'deleteSearchHistory',
+                // 'saveSearchHistory',
+                // 'deleteSearchHistory',
                 'clearSearchHistory'
             ]),
             deleteOne(item){
@@ -88,12 +89,12 @@
             showConfirm(){
                 this.$refs.confirm.show();
             },
-            blurInput(){
-                this.$refs.searchBox.blur();
-            },
-            addQuery(query){
-                this.$refs.searchBox.setQuery(query)
-            },
+            // blurInput(){
+            //     this.$refs.searchBox.blur();
+            // },
+            // addQuery(query){
+            //     this.$refs.searchBox.setQuery(query)
+            // },
             _getHotKey(){
                 getHotKey().then(res=>{
                     if(res.code == ERR_OK){
@@ -101,12 +102,12 @@
                     }
                 })
             },
-            onQueryChange(query){
-                this.query =  query;
-            },
-            saveSearch(){
-                this.saveSearchHistory(this.query);
-            },
+            // onQueryChange(query){
+            //     this.query =  query;
+            // },
+            // saveSearch(){
+            //     this.saveSearchHistory(this.query);
+            // },
 
             handelPlayList(playlist){
                 const bottom = playlist.length>0 ? '60px':0;

@@ -9,7 +9,7 @@
                         <span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
                     </h1>
                 </div>
-                <scroll ref="listContent" :data="sequenceList" class="list-content">
+                <scroll ref="listContent" :refreshDelay="refreshDelay" :data="sequenceList" class="list-content">
                     <transition-group name="list" tag="ul">
                         <li :key="item.id" ref="listItem" class="item" @click="selectItem(item,index)" v-for="item,index in sequenceList">
                             <i class="current" :class="getCurrentIcon(item)"></i>
@@ -24,7 +24,7 @@
                     </transition-group>
                 </scroll>
                 <div class="list-operate">
-                    <div class="add">
+                    <div class="add" @click="addSong">
                         <i class="icon-add"></i>
                         <span class="text">添加歌曲到队列</span>
                     </div>
@@ -34,6 +34,7 @@
                 </div>
             </div>
             <confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表" confirmBtnText="清空"></confirm>
+            <add-song ref="addSong"></add-song>
         </div>
     </transition>
 </template>
@@ -44,7 +45,7 @@
     import Scroll from 'base/scroll/scroll'
     import Confirm from 'base/confirm/confirm'
     import {playerMixin} from "common/js/mixin";
-
+    import AddSong from 'components/add-song/add-song'
     export default {
         name: "playlist",
         mixins:[playerMixin],
@@ -55,7 +56,8 @@
         },
         components:{
             Scroll,
-            Confirm
+            Confirm,
+            AddSong
         },
         computed:{
             ...mapGetters([
@@ -77,6 +79,9 @@
                 'deleteSong',
                 'deleteSongList'
             ]),
+            addSong(){
+              this.$refs.addSong.show();
+            },
             confirmClear(){
                 this.deleteSongList();
                 this.hide();
@@ -117,6 +122,7 @@
                 this.showFlag = true;
                 setTimeout(()=>{
                     this.$refs.listContent.refresh();
+                    this.scrollCurrent(this.currentSong);
                 },30);
             },
             hide(){
