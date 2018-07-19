@@ -64,7 +64,7 @@
                             <i @click="next" class="icon-next"></i>
                         </div>
                         <div class="icon i-right">
-                            <i class="icon-not-favorite"></i>
+                            <i class="icon" @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
 
         <play-list ref="playlist"></play-list>
 
-        <audio @ended="end" @timeupdate="updateTime" @canplay="ready" @error="error" :src="currentSong.url" ref="audio"></audio>
+        <audio @ended="end" @timeupdate="updateTime" @play="ready" @error="error" :src="currentSong.url" ref="audio"></audio>
     </div>
 </template>
 
@@ -237,6 +237,7 @@
                 if (!this.songReady) return;
                 if(this.playlist.length === 1){
                     this.loop();
+                    return;
                 }else{
                     let index = this.currentIndex + 1;
                     if (index === this.playlist.length) {
@@ -254,6 +255,7 @@
                 if (!this.songReady) return;
                 if(this.playlist.length === 1){
                     this.loop();
+                    return;
                 }else{
                     let index = this.currentIndex - 1;
                     if (index === -1) {
@@ -337,6 +339,7 @@
             },
             getLyric(){
               this.currentSong.getLyric().then((lyric)=>{
+                  if(this.currentSong.lyric  !== lyric)return;
                   this.currentLyric = new Lyric(lyric,this.handleLyric);
                   if(this.playing){
                       this.currentLyric.play();
@@ -459,14 +462,28 @@
                     }else{
                         if(this.currentLyric){
                             this.currentLyric.stop();
+                            this.currentTime = 0;
+                            this.playingLyric = '';
+                            this.currentLineNum = 0;
                         }
-                      this.play();
+                        clearTimeout(this.timer);
+                        this.timer = setTimeout(()=>{
+                            this.play();
+                            this.getLyric();
+                        },1000);
                     }
                 }else{
                     if(this.currentLyric){
                         this.currentLyric.stop();
+                        this.currentTime = 0;
+                        this.playingLyric = '';
+                        this.currentLineNum = 0;
                     }
-                    this.play();
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(()=>{
+                        this.play();
+                        this.getLyric();
+                    },1000);
                 }
 
             }
