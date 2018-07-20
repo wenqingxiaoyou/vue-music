@@ -15,6 +15,10 @@ fastclick.attach(document.body);
 
 import './common/stylus/index.styl'
 /* eslint-disable no-new */
+import vConsole from 'vconsole'
+if(process.env.NODE_ENV !== 'production'){
+    let r = new vConsole();
+}
 
 Vue.use(VueLazyLoad,{
   loading:require('common/image/default.png')
